@@ -1,0 +1,139 @@
+<style type="text/css">
+	
+
+BODY {
+  background: black;
+  color: #DDDDDD;
+  font-family: courier new;
+  text-align: center;
+}
+
+H1 {
+  text-align: center;
+  font-size: 14pt;
+  font-weight: normal;
+}
+#grid {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#grid tr td{
+  border:1px solid white;
+  background: #999999;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
+
+#grid tr td.selected {
+    background: #333333;
+}
+
+#grid tr td.open_mine {
+    background: #FF0000;
+}
+
+button{
+  margin: 12px;
+}
+
+
+</style>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <!DOCTYPE>
+ <html>
+ <meta charset="UTF-8">
+<H1>Minesweeper</H1>
+<table id=grid>
+</table>
+<button onclick="createMines()" id="start">Start</button> 
+<button onclick="createMines()" id="restart">ReStart</button>
+</html>
+<script type="text/javascript">
+	$(document).ready(function(){
+		 $("#grid").empty();
+		$("#restart").hide();
+	})
+function  createMines()
+{    $("#start").hide();
+     $("#restart").show();
+     $("#grid").empty();
+	  for (var i = 0; i < 10; i++) {
+                row = $('<tr></tr>');
+                for (var j = 0; j < 10; j++) {
+                	var id=i+"-"+j;
+                    var rowData = $('<td dm="false" id="'+id+'" onclick="checkCell(this)"></td>').addClass('bar').text('-');
+                   row.append(rowData);
+                }
+                 $("#grid").append(row)  
+            }
+         
+          for (var i=0; i<20; i++) {
+    				var row = Math.floor(Math.random() * 10);
+    				var col = Math.floor(Math.random() * 10);
+     				var id = '#'+ row + "-" + col;
+        		  $(id).attr("dm","true");
+                 // $(id).html("X")
+ 			}
+}
+
+
+
+function openMines() {
+   
+    for (var i=0; i<10; i++) {
+      for(var j=0; j<10; j++) {
+        var id = '#'+ i + "-" + j;
+        if ($(id).attr('dm')=="true")
+        {
+        	$(id).addClass('open_mine');
+        } 
+      }
+    }
+
+}
+
+
+
+function checkCell(cell) {
+	
+   var cell_id =$(cell).attr("id");
+   var cell_split = cell_id.split("-");
+   
+
+     if ($(cell).attr("dm")=="true") {
+        openMines();
+        alert("Game Over");
+    } else {
+  	   $("#"+cell_id).addClass("selected");
+       var mineCount=0;
+       var cellRow = $(cell).parent().index();
+       var cellCol = $(cell).index();
+  	   for (var i=Math.max(cellRow-1,0); i<=Math.min(cellRow+1,9); i++) {
+         for(var j=Math.max(cellCol-1,0); j<=Math.min(cellCol+1,9); j++) {
+            var id = '#'+ i + "-" + j;
+              if ($(id).attr('dm')=="true") mineCount++;
+      }
+    }
+    $("#"+cell_id).text(mineCount);
+
+    var checkComplete = true;
+       for (var i=0; i<10; i++) {
+         for(var j=0; j<10; j++) {
+      	  var id = '#'+ i + "-" + j;
+          if ($(id).attr('dm')=="false") {
+        	checkComplete=false;
+         }
+      }
+   }
+   if (checkComplete) {
+        alert("You Win!");
+        openMines();
+   }
+   
+  }
+}
+
+
+</script>
